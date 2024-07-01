@@ -29,17 +29,11 @@ func IndexBot(c echo.Context) error {
 }
 
 func ShowBot(c echo.Context) error {
-	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, utils.ErrorResponse("Invalid ID"))
-	}
+	growid := c.Param("growid")
 
 	var bot model.Bot
 
-	if err := config.DB.First(&bot, id).Error; err != nil {
-		return c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to retrieve bot"))
-	}
-
+	config.DB.Where("growid = ?", growid).First(&bot)
 	return c.JSON(http.StatusOK, utils.SuccessResponse("Bot data successfully retrieved", bot))
 }
 

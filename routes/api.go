@@ -30,7 +30,7 @@ func Init() *echo.Echo {
 	e.GET("/bots", controller.IndexBot)
 	e.GET("/bots/worlds/:id", controller.GetWorldByBotHandlerId)
 	e.GET("/bots/worlds/growid/:growid", controller.GetWorldByBotName)
-	e.GET("/bots/:id", controller.ShowBot)
+	e.GET("/bots/:growid", controller.ShowBot)
 	e.PUT("/bots/:growid", controller.UpdateBot)
 	e.DELETE("/bots/:id", controller.DeleteBot)
 	e.PUT("/bots/assignWorlds", controller.AssignBotToWorld)
