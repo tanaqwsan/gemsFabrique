@@ -86,6 +86,7 @@ func ConvertIndexWord(words []model.Word) []web.GetWordResponse {
 			Id:     int(word.ID),
 			Growid: word.Growid,
 			Word:   word.Word,
+			Target: word.Target,
 		}
 		results = append(results, wordResponse)
 	}

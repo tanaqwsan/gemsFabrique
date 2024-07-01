@@ -41,6 +41,7 @@ func Init() *echo.Echo {
 	e.GET("/words", controller.IndexWord)
 	e.GET("/words/:growid", controller.ShowWord)
 	e.PUT("/words/:growid/:word", controller.UpdateWord)
+	//e.PUT("/words/:growid/targetxzx?uTarget=", controller.UpdateWord)
 	e.PUT("/words/erase/:growid", controller.EraseWord)
 
 	return e

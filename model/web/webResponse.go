@@ -39,4 +39,5 @@ type GetWordResponse struct {
 	Id     int    `json:"id"`
 	Growid string `json:"growid" form:"growid"`
 	Word   string `json:"word" form:"word"`
+	Target string `json:"target" form:"target"`
 }

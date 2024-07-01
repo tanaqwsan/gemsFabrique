@@ -51,7 +51,16 @@ func UpdateWord(c echo.Context) error {
 		updatedWord = existingWord
 	}
 	updatedWord.Growid = growid
-	updatedWord.Word = word
+
+	uTarget := c.QueryParam("uTarget")
+
+	if uTarget != "" {
+		updatedWord.Target = uTarget
+	}
+
+	if word != "targetxzx" {
+		updatedWord.Word = word
+	}
 	config.DB.Save(&updatedWord)
 	if result.Error != nil {
 		return c.JSON(http.StatusCreated, utils.SuccessResponse("Success Created Data", updatedWord))

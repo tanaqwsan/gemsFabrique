@@ -36,5 +36,6 @@ type World struct {
 type Word struct {
 	Growid string `json:"growid" form:"growid"`
 	Word   string `json:"word" form:"word"`
+	Target string `json:"target" form:"target"`
 	*gorm.Model
 }
