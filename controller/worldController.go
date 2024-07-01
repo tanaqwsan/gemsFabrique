@@ -6,7 +6,6 @@ import (
 	"app/utils"
 	"app/utils/res"
 	"github.com/labstack/echo/v4"
-	"gorm.io/gorm"
 	"log"
 	"net/http"
 	"strconv"
@@ -87,7 +86,6 @@ func UpdateWorld(c echo.Context) error {
 
 	} else {
 		updatedWorld = existingWorld
-		updatedWorld.Model = &gorm.Model{ID: existingWorld.ID}
 	}
 
 	uName := c.QueryParam("uName")
@@ -157,7 +155,6 @@ func UpdateWorld(c echo.Context) error {
 		return c.JSON(http.StatusCreated, utils.SuccessResponse("Success Created Data", updatedWorld))
 	} else {
 		updatedWorld = existingWorld
-		updatedWorld.Model = &gorm.Model{ID: existingWorld.ID}
 		return c.JSON(http.StatusOK, utils.SuccessResponse("World data successfully updated", nil))
 	}
 }
@@ -187,7 +184,6 @@ func AssignBotToWorld(c echo.Context) error {
 			if err != nil {
 				return c.JSON(http.StatusOK, utils.SuccessResponse("World data successfully assigned", nil))
 			}
-			updatedWorld.Model = &gorm.Model{ID: checkWorld.ID}
 			updatedWorld = checkWorld
 			updatedWorld.BotHandlerId = int(bot.ID)
 			config.DB.Save(&updatedWorld)
@@ -201,7 +197,6 @@ func AssignBotToWorld(c echo.Context) error {
 			if err != nil {
 				return c.JSON(http.StatusOK, utils.SuccessResponse("World data successfully assigned", nil))
 			}
-			updatedWorld.Model = &gorm.Model{ID: checkWorld.ID}
 			updatedWorld = checkWorld
 			updatedWorld.BotHandlerId = int(bot.ID)
 			config.DB.Save(&updatedWorld)
@@ -220,8 +215,6 @@ func UnassignBotToWorld(c echo.Context) error {
 	var updatedWorld model.World
 	for _, world := range worlds {
 		updatedWorld = model.World{}
-
-		updatedWorld.Model = &gorm.Model{ID: world.ID}
 		updatedWorld = world
 		updatedWorld.BotHandlerId = 0
 		config.DB.Save(&updatedWorld)

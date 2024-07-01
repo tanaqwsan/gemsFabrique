@@ -6,7 +6,6 @@ import (
 	"app/utils"
 	"app/utils/res"
 	"github.com/labstack/echo/v4"
-	"gorm.io/gorm"
 	"log"
 	"net/http"
 	"strconv"
@@ -69,7 +68,6 @@ func UpdateBot(c echo.Context) error {
 
 	} else {
 		updatedBot = existingBot
-		updatedBot.Model = &gorm.Model{ID: existingBot.ID}
 	}
 
 	uGrowid := c.QueryParam("uGrowid")
