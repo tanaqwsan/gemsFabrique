@@ -58,6 +58,7 @@ func ConvertIndexBot(bots []model.Bot) []web.GetBotResponse {
 			Gems:        bot.Gems,
 			Level:       bot.Level,
 			IsSuspended: bot.IsSuspended,
+			Whatever:    bot.Whatever,
 		}
 		results = append(results, botResponse)
 	}

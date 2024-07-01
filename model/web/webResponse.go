@@ -32,6 +32,7 @@ type GetBotResponse struct {
 	Gems        int    `json:"gems" form:"gems"`
 	Level       int    `json:"level" form:"level"`
 	IsSuspended int    `json:"is_suspended" form:"is_suspended"` //0 = No, 1 = Yes
+	Whatever    string `json:"whatever" form:"whatever"`
 }
 
 type GetWordResponse struct {

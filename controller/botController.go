@@ -75,6 +75,7 @@ func UpdateBot(c echo.Context) error {
 	uGems := c.QueryParam("uGems")
 	uLevel := c.QueryParam("uLevel")
 	uIsSuspended := c.QueryParam("uIsSuspended")
+	uWhatever := c.QueryParam("uWhatever")
 
 	if uGrowid != "" {
 		updatedBot.Growid = uGrowid
@@ -90,6 +91,9 @@ func UpdateBot(c echo.Context) error {
 	}
 	if uIsSuspended != "" {
 		updatedBot.IsSuspended, _ = strconv.Atoi(uIsSuspended)
+	}
+	if uWhatever != "" {
+		updatedBot.Whatever = uWhatever
 	}
 	config.DB.Save(&updatedBot)
 	if result.Error != nil {
