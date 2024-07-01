@@ -24,6 +24,7 @@ func ConvertIndexWorld(worlds []model.World) []web.GetWorldResponse {
 			TilePepperBlockCount:  world.TilePepperBlockCount,
 			FossilCount:           world.FossilCount,
 			BotHandlerId:          world.BotHandlerId,
+			Gems:                  world.Gems,
 		}
 		results = append(results, worldResponse)
 	}

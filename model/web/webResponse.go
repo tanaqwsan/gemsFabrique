@@ -16,6 +16,7 @@ type GetWorldResponse struct {
 	TilePepperBlockCount  int    `json:"tile_pepper_block_count" form:"tile_pepper_block_count"`
 	FossilCount           int    `json:"fossil_count" form:"fossil_count"`
 	BotHandlerId          int    `json:"bot_handler_id" form:"bot_handler_id"`
+	Gems                  int    `json:"gems" form:"gems"`
 }
 type GetWorldNameIdOnlyResponse struct {
 	Id           int    `json:"id"`

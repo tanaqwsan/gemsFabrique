@@ -103,6 +103,7 @@ func UpdateWorld(c echo.Context) error {
 	uFossilCount := c.QueryParam("uFossilCount")
 	uSLOwner := c.QueryParam("uSLOwner")
 	uBotHandlerId := c.QueryParam("uBotHandlerId")
+	uGems := c.QueryParam("uGems")
 
 	//http://localhost:8080/world/update/1?uName=world1&uNameId=world1&uOwner=owner1&uType=type1&uIsSmallLock=1&uIsNuked=1&uSmallLockAge=1&uFloatPepperBlockCount=1&uFloatPepperSeedCount=1&uTilePepperSeedCount=1&uTilePepperBlockCount=1&uFossilCount=1&uBotHandlerId=1
 
@@ -148,6 +149,9 @@ func UpdateWorld(c echo.Context) error {
 	}
 	if uBotHandlerId != "" {
 		updatedWorld.BotHandlerId, _ = strconv.Atoi(uBotHandlerId)
+	}
+	if uGems != "" {
+		updatedWorld.Gems, _ = strconv.Atoi(uGems)
 	}
 	config.DB.Save(&updatedWorld)
 
