@@ -76,3 +76,18 @@ func ConvertIndexWorldOnlyName(worlds []model.World) []web.GetWorldResponse {
 
 	return results
 }
+
+func ConvertIndexWord(words []model.Word) []web.GetWordResponse {
+	var results []web.GetWordResponse
+	for _, word := range words {
+		wordResponse := web.GetWordResponse{
+			Id:     int(word.ID),
+			Growid: word.Growid,
+			Word:   word.Word,
+		}
+		results = append(results, wordResponse)
+	}
+
+	return results
+
+}

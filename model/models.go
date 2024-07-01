@@ -30,3 +30,9 @@ type World struct {
 	BotHandlerId          int    `json:"bot_handler_id" form:"bot_handler_id"`
 	*gorm.Model
 }
+
+type Word struct {
+	Growid string `json:"growid" form:"growid"`
+	Word   string `json:"word" form:"word"`
+	*gorm.Model
+}

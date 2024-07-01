@@ -37,6 +37,12 @@ func Init() *echo.Echo {
 	e.PUT("/bots/unassignWorlds", controller.UnassignBotToWorld)
 	e.PUT("/bots/unassignWorldsFast", controller.UnassignBotToWorldFast)
 
+	//Manage Word
+	e.GET("/words", controller.IndexWord)
+	e.GET("/words/:growid", controller.ShowWord)
+	e.PUT("/words/:growid/:word", controller.UpdateWord)
+	e.PUT("/words/erase/:growid", controller.EraseWord)
+
 	return e
 
 }

@@ -32,3 +32,9 @@ type GetBotResponse struct {
 	Level       int    `json:"level" form:"level"`
 	IsSuspended int    `json:"is_suspended" form:"is_suspended"` //0 = No, 1 = Yes
 }
+
+type GetWordResponse struct {
+	Id     int    `json:"id"`
+	Growid string `json:"growid" form:"growid"`
+	Word   string `json:"word" form:"word"`
+}
