@@ -35,7 +35,7 @@ func ConnectDB() {
 }
 
 func InitMigrate() {
-	err := DB.AutoMigrate(&model.Bot{}, &model.World{})
+	err := DB.AutoMigrate(&model.Bot{}, &model.World{}, &model.Word{})
 	if err != nil {
 		return
 	}
