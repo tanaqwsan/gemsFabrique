@@ -258,6 +258,55 @@ func AssignBotToWorldStorageSeed(c echo.Context) error {
 	return c.JSON(http.StatusOK, utils.SuccessResponse("World data successfully assigned", nil))
 }
 
+func AssignBotToWorldStorageSeedOneHundredBotOnly(c echo.Context) error {
+	var bots []model.Bot
+	var worlds []model.World
+	//err := config.DB.Find(&bots).Error
+	//err = config.DB.Where("owner = ?", "storage_seed").Find(&bots).Error
+	//limit the bots result to 100
+	err := config.DB.Where("is_suspended = ?", 0).Limit(100).Find(&bots).Error
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to retrieve bots"))
+	}
+	errW := config.DB.Find(&worlds).Error
+	if errW != nil {
+		return c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to retrieve worlds"))
+	}
+	divider := len(worlds) / len(bots)
+	if len(bots) == 0 {
+		return c.JSON(http.StatusNotFound, utils.ErrorResponse("Empty data"))
+	}
+	var checkWorld model.World
+	var updatedWorld model.World
+	for _, bot := range bots {
+		for i := 1; i <= divider; i++ {
+			checkWorld = model.World{}
+			updatedWorld = model.World{}
+			err := config.DB.Where("bot_handler_id = ? and owner = ?", 0, "storage_seed").First(&checkWorld).Error
+			if err != nil {
+				return c.JSON(http.StatusOK, utils.SuccessResponse("World data successfully assigned", bots))
+			}
+			updatedWorld = checkWorld
+			updatedWorld.BotHandlerId = int(bot.ID)
+			config.DB.Save(&updatedWorld)
+		}
+	}
+	for _, bot := range bots {
+		for i := 1; i <= divider; i++ {
+			checkWorld = model.World{}
+			updatedWorld = model.World{}
+			err := config.DB.Where("bot_handler_id = ? and owner = ?", 0, "storage_seed").First(&checkWorld).Error
+			if err != nil {
+				return c.JSON(http.StatusOK, utils.SuccessResponse("World data successfully assigned", bots))
+			}
+			updatedWorld = checkWorld
+			updatedWorld.BotHandlerId = int(bot.ID)
+			config.DB.Save(&updatedWorld)
+		}
+	}
+	return c.JSON(http.StatusOK, utils.SuccessResponse("World data successfully assigned", bots))
+}
+
 func UnassignBotToWorld(c echo.Context) error {
 	var worlds []model.World
 	errW := config.DB.Find(&worlds).Error
