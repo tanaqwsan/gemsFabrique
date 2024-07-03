@@ -34,6 +34,7 @@ func Init() *echo.Echo {
 	e.PUT("/bots/:growid", controller.UpdateBot)
 	e.DELETE("/bots/:id", controller.DeleteBot)
 	e.PUT("/bots/assignWorlds", controller.AssignBotToWorld)
+	e.PUT("/bots/assignWorldsStorageSeed", controller.AssignBotToWorldStorageSeed)
 	e.PUT("/bots/unassignWorlds", controller.UnassignBotToWorld)
 	e.PUT("/bots/unassignWorldsFast", controller.UnassignBotToWorldFast)
 
