@@ -268,7 +268,8 @@ func AssignBotToWorldStorageSeedOneHundredBotOnly(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to retrieve bots"))
 	}
-	errW := config.DB.Find(&worlds).Error
+	//config.DB.Where("bot_handler_id = ? and owner = ?", 0, "storage_seed")
+	errW := config.DB.Where("bot_handler_id = ? and owner = ?", 0, "storage_seed").Find(&worlds).Error
 	if errW != nil {
 		return c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to retrieve worlds"))
 	}
