@@ -406,17 +406,32 @@ func GetWorldTypeStorageSeedThatHasBiggestFloatingPepperSeed(c echo.Context) err
 }
 
 func GetWorldTypeStorageSeedThatHasSmallestFloatingPepperSeed(c echo.Context) error {
-	var world model.World
-	err := config.DB.Where("type = ? AND sl_owner = ?", "storage_seed", "notfound").Order("float_pepper_seed_count asc").First(&world).Error
+	var existingWorld model.World
+	var updatedWorld model.World
+	//Where("type = ? AND sl_owner = ?", "storage_seed", "notfound") add condition where "last_accessed" - time.Now().Unix() > 120
+	currentTime := time.Now().Unix()
+	err := config.DB.Where("type = ? AND sl_owner = ? AND ? - last_accessed > ?", "storage_seed", "notfound", currentTime, 120).Order("float_pepper_seed_count asc").First(&existingWorld).Error
 	if err != nil {
-		err := config.DB.Where("type = ?", "storage_seed").Order("float_pepper_seed_count asc").First(&world).Error
-		if err != nil {
+		errorSecond := config.DB.Where("type = ?", "storage_seed").Order("float_pepper_seed_count asc").First(&existingWorld).Error
+		if errorSecond != nil {
 			return c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to retrieve world"))
 		} else {
-			return c.JSON(http.StatusOK, utils.SuccessResponse("World data successfully retrieved", world))
+			updatedWorld = existingWorld
+			updatedWorld.LastAccessed = time.Now().Unix()
+			errUpdate := config.DB.Save(&updatedWorld).Error
+			if errUpdate != nil {
+				return c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to update world"))
+			}
+			return c.JSON(http.StatusOK, utils.SuccessResponse("World data successfully retrieved", updatedWorld))
 		}
 	} else {
-		return c.JSON(http.StatusOK, utils.SuccessResponse("World data successfully retrieved", world))
+		updatedWorld = existingWorld
+		updatedWorld.LastAccessed = time.Now().Unix()
+		errUpdate := config.DB.Save(&updatedWorld).Error
+		if errUpdate != nil {
+			return c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to update world"))
+		}
+		return c.JSON(http.StatusOK, utils.SuccessResponse("World data successfully retrieved", updatedWorld))
 	}
 }
 
