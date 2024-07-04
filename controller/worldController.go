@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 func IndexWorld(c echo.Context) error {
@@ -153,6 +154,29 @@ func UpdateWorld(c echo.Context) error {
 	if uGems != "" {
 		updatedWorld.Gems, _ = strconv.Atoi(uGems)
 	}
+	updatedWorld.LastAccessed = time.Now().Unix()
+	config.DB.Save(&updatedWorld)
+
+	if result.Error != nil {
+		return c.JSON(http.StatusCreated, utils.SuccessResponse("Success Created Data", updatedWorld))
+	} else {
+		updatedWorld = existingWorld
+		return c.JSON(http.StatusOK, utils.SuccessResponse("World data successfully updated", nil))
+	}
+}
+
+func UpdateWorldLastAccess(c echo.Context) error {
+	name := c.Param("name")
+
+	var existingWorld model.World
+	var updatedWorld model.World
+	result := config.DB.Where("name = ?", name).First(&existingWorld)
+	if result.Error != nil {
+
+	} else {
+		updatedWorld = existingWorld
+	}
+	updatedWorld.LastAccessed = time.Now().Unix()
 	config.DB.Save(&updatedWorld)
 
 	if result.Error != nil {
@@ -369,6 +393,26 @@ func GetWorldByBotName(c echo.Context) error {
 
 	response := res.ConvertIndexWorld(worlds)
 	return c.JSON(http.StatusOK, utils.SuccessResponse("World data successfully retrieved", response))
+}
+
+func GetWorldTypeStorageSeedThatHasBiggestFloatingPepperSeed(c echo.Context) error {
+	var world model.World
+	err := config.DB.Where("type = ? AND sl_owner != ?", "storage_seed", "notfound").Order("float_pepper_seed_count desc").First(&world).Error
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to retrieve world"))
+	}
+
+	return c.JSON(http.StatusOK, utils.SuccessResponse("World data successfully retrieved", world))
+}
+
+func GetWorldTypeStorageSeedThatHasSmallestFloatingPepperSeed(c echo.Context) error {
+	var world model.World
+	err := config.DB.Where("type = ?", "storage_seeds").Order("float_pepper_seed_count asc").First(&world).Error
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to retrieve world"))
+	} else {
+		return c.JSON(http.StatusOK, utils.SuccessResponse("World data successfully retrieved", world))
+	}
 }
 
 func DeleteWorld(c echo.Context) error {

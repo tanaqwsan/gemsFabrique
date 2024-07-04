@@ -22,7 +22,10 @@ func Init() *echo.Echo {
 	e.GET("/worlds", controller.IndexWorld)
 	e.GET("/worldsName", controller.IndexWorldOnlyName)
 	e.GET("/worlds/:name", controller.ShowWorld)
+	e.GET("/worldsBiggestSeeds", controller.GetWorldTypeStorageSeedThatHasBiggestFloatingPepperSeed)
+	e.GET("/worldsSmallestSeeds", controller.GetWorldTypeStorageSeedThatHasSmallestFloatingPepperSeed)
 	e.PUT("/worlds/:name", controller.UpdateWorld)
+	e.PUT("/worldsAccess/:name", controller.UpdateWorldLastAccess)
 	e.DELETE("/worlds/:name", controller.DeleteWorld)
 
 	//Manage Bot

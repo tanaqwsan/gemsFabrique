@@ -3,6 +3,7 @@ package res
 import (
 	"app/model"
 	"app/model/web"
+	"time"
 )
 
 func ConvertIndexWorld(worlds []model.World) []web.GetWorldResponse {
@@ -25,6 +26,7 @@ func ConvertIndexWorld(worlds []model.World) []web.GetWorldResponse {
 			FossilCount:           world.FossilCount,
 			BotHandlerId:          world.BotHandlerId,
 			Gems:                  world.Gems,
+			LastAccessed:          world.LastAccessed,
 		}
 		results = append(results, worldResponse)
 	}
@@ -93,4 +95,16 @@ func ConvertIndexWord(words []model.Word) []web.GetWordResponse {
 
 	return results
 
+}
+
+func currentEpochTime() int64 {
+	return time.Now().Unix()
+}
+
+func humanReadableToEpoch(date time.Time) int64 {
+	return date.Unix()
+}
+
+func epochToHumanReadable(epoch int64) time.Time {
+	return time.Unix(epoch, 0)
 }
