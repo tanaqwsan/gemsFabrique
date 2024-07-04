@@ -412,7 +412,7 @@ func GetWorldTypeStorageSeedThatHasSmallestFloatingPepperSeed(c echo.Context) er
 	currentTime := time.Now().Unix()
 	err := config.DB.Where("type = ? AND sl_owner = ? AND ? - last_accessed > ?", "storage_seed", "notfound", currentTime, 120).Order("float_pepper_seed_count asc").First(&existingWorld).Error
 	if err != nil {
-		errorSecond := config.DB.Where("type = ?", "storage_seed").Order("float_pepper_seed_count asc").First(&existingWorld).Error
+		errorSecond := config.DB.Where("type = ? AND ? - last_accessed > ?", "storage_seed", currentTime, 120).Order("float_pepper_seed_count asc").First(&existingWorld).Error
 		if errorSecond != nil {
 			return c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to retrieve world"))
 		} else {
