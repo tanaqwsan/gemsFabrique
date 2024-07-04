@@ -154,7 +154,7 @@ func UpdateWorld(c echo.Context) error {
 	if uGems != "" {
 		updatedWorld.Gems, _ = strconv.Atoi(uGems)
 	}
-	updatedWorld.LastAccessed = time.Now().Unix()
+	updatedWorld.LastAccessed = int(time.Now().Unix())
 	config.DB.Save(&updatedWorld)
 
 	if result.Error != nil {
@@ -176,7 +176,7 @@ func UpdateWorldLastAccess(c echo.Context) error {
 	} else {
 		updatedWorld = existingWorld
 	}
-	updatedWorld.LastAccessed = time.Now().Unix()
+	updatedWorld.LastAccessed = int(time.Now().Unix())
 	config.DB.Save(&updatedWorld)
 
 	if result.Error != nil {
@@ -417,7 +417,7 @@ func GetWorldTypeStorageSeedThatHasSmallestFloatingPepperSeed(c echo.Context) er
 			return c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to retrieve world"))
 		} else {
 			updatedWorld = existingWorld
-			updatedWorld.LastAccessed = time.Now().Unix()
+			updatedWorld.LastAccessed = int(time.Now().Unix())
 			errUpdate := config.DB.Save(&updatedWorld).Error
 			if errUpdate != nil {
 				return c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to update world"))
@@ -426,7 +426,7 @@ func GetWorldTypeStorageSeedThatHasSmallestFloatingPepperSeed(c echo.Context) er
 		}
 	} else {
 		updatedWorld = existingWorld
-		updatedWorld.LastAccessed = time.Now().Unix()
+		updatedWorld.LastAccessed = int(time.Now().Unix())
 		errUpdate := config.DB.Save(&updatedWorld).Error
 		if errUpdate != nil {
 			return c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to update world"))

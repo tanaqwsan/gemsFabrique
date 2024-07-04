@@ -30,7 +30,7 @@ type World struct {
 	FossilCount           int    `json:"fossil_count" form:"fossil_count"`
 	BotHandlerId          int    `json:"bot_handler_id" form:"bot_handler_id"`
 	Gems                  int    `json:"gems" form:"gems"`
-	LastAccessed          int64  `json:"last_accessed" form:"last_accessed"`
+	LastAccessed          int    `json:"last_accessed" form:"last_accessed"`
 	*gorm.Model
 }
 
