@@ -405,6 +405,16 @@ func GetWorldTypeStorageSeedThatHasBiggestFloatingPepperSeed(c echo.Context) err
 	return c.JSON(http.StatusOK, utils.SuccessResponse("World data successfully retrieved", world))
 }
 
+func GetWorldTypeStorageSeedThatHasBiggestFloatingPepperSeedUnderXK(c echo.Context) error {
+	var world model.World
+	XK := c.Param("xk")
+	err := config.DB.Where("type = ? AND sl_owner != ? AND float_pepper_seed_count < ?", "storage_seed", "notfound", XK).Order("float_pepper_seed_count desc").First(&world).Error
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to retrieve world"))
+	}
+	return c.JSON(http.StatusOK, utils.SuccessResponse("World data successfully retrieved", world))
+}
+
 func GetWorldTypeStorageSeedThatHasSmallestFloatingPepperSeed(c echo.Context) error {
 	var existingWorld model.World
 	var updatedWorld model.World
