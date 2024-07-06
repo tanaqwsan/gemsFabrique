@@ -449,20 +449,9 @@ func GetWorldTypeStorageSeedThatHasSmallestFloatingPepperSeedTypeAll(c echo.Cont
 	var updatedWorld model.World
 	//Where("type = ? AND sl_owner = ?", "storage_seed", "notfound") add condition where "last_accessed" - time.Now().Unix() > 120
 	currentTime := time.Now().Unix()
-	err := config.DB.Where("float_pepper_seed_count > ? AND float_pepper_seed_count < ? AND sl_owner = ? AND ? - last_accessed > ?", 0, 100000, "notfound", currentTime, 2).Order("float_pepper_seed_count asc").First(&existingWorld).Error
-	if err != nil {
-		errorSecond := config.DB.Where("float_pepper_seed_count > ? AND float_pepper_seed_count < ? AND ? - last_accessed > ?", 0, 100000, currentTime, 2).Order("float_pepper_seed_count asc").First(&existingWorld).Error
-		if errorSecond != nil {
-			return c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to retrieve world"))
-		} else {
-			updatedWorld = existingWorld
-			updatedWorld.LastAccessed = int(time.Now().Unix())
-			errUpdate := config.DB.Save(&updatedWorld).Error
-			if errUpdate != nil {
-				return c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to update world"))
-			}
-			return c.JSON(http.StatusOK, utils.SuccessResponse("World data successfully retrieved", updatedWorld))
-		}
+	errorSecond := config.DB.Where("float_pepper_seed_count > ? AND float_pepper_seed_count < ? AND ? - last_accessed > ?", 0, 47500, currentTime, 3).Order("float_pepper_seed_count asc").First(&existingWorld).Error
+	if errorSecond != nil {
+		return c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to retrieve world"))
 	} else {
 		updatedWorld = existingWorld
 		updatedWorld.LastAccessed = int(time.Now().Unix())
