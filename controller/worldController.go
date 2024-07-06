@@ -449,7 +449,7 @@ func GetWorldTypeStorageSeedThatHasSmallestFloatingPepperSeedTypeAll(c echo.Cont
 	var updatedWorld model.World
 	//Where("type = ? AND sl_owner = ?", "storage_seed", "notfound") add condition where "last_accessed" - time.Now().Unix() > 120
 	currentTime := time.Now().Unix()
-	errorSecond := config.DB.Where("float_pepper_seed_count > ? AND float_pepper_seed_count < ? AND ? - last_accessed > ?", 0, 47500, currentTime, 3).Order("float_pepper_seed_count asc").First(&existingWorld).Error
+	errorSecond := config.DB.Where("float_pepper_seed_count > ? AND float_pepper_seed_count < ? AND ? - last_accessed > ? AND type = ?", 0, 47500, currentTime, 3, "storage_seed").Order("float_pepper_seed_count asc").First(&existingWorld).Error
 	if errorSecond != nil {
 		return c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to retrieve world"))
 	} else {
