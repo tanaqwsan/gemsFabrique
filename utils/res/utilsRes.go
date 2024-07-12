@@ -27,6 +27,7 @@ func ConvertIndexWorld(worlds []model.World) []web.GetWorldResponse {
 			BotHandlerId:          world.BotHandlerId,
 			Gems:                  world.Gems,
 			LastAccessed:          world.LastAccessed,
+			Problem:               world.Problem,
 		}
 		results = append(results, worldResponse)
 	}
@@ -61,6 +62,8 @@ func ConvertIndexBot(bots []model.Bot) []web.GetBotResponse {
 			Level:       bot.Level,
 			IsSuspended: bot.IsSuspended,
 			Whatever:    bot.Whatever,
+			GroupType:   bot.GroupType,
+			GroupOwner:  bot.GroupOwner,
 		}
 		results = append(results, botResponse)
 	}

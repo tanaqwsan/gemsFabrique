@@ -26,6 +26,7 @@ func Init() *echo.Echo {
 	e.GET("/worldsBiggestSeedsXK/:xk", controller.GetWorldTypeStorageSeedThatHasBiggestFloatingPepperSeedUnderXK)
 	e.GET("/worldsSmallestSeeds", controller.GetWorldTypeStorageSeedThatHasSmallestFloatingPepperSeed)
 	e.GET("/worldsSmallestSeedsTypeAll", controller.GetWorldTypeStorageSeedThatHasSmallestFloatingPepperSeedTypeAll)
+	e.PUT("/worldsGetAndSetBiggestFloatingBlock", controller.GetAndSetWorldThatHasBiggestFloatingBlock)
 	e.PUT("/worlds/:name", controller.UpdateWorld)
 	e.PUT("/worldsAccess/:name", controller.UpdateWorldLastAccess)
 	e.DELETE("/worlds/:name", controller.DeleteWorld)

@@ -11,6 +11,8 @@ type Bot struct {
 	Level       int    `json:"level" form:"level"`
 	IsSuspended int    `json:"is_suspended" form:"is_suspended"` //0 = No, 1 = Yes
 	Whatever    string `json:"whatever" form:"whatever"`
+	GroupType   string `json:"group_type" form:"group_type"`
+	GroupOwner  string `json:"group_owner" form:"group_owner"`
 	*gorm.Model
 }
 
@@ -31,6 +33,7 @@ type World struct {
 	BotHandlerId          int    `json:"bot_handler_id" form:"bot_handler_id"`
 	Gems                  int    `json:"gems" form:"gems"`
 	LastAccessed          int    `json:"last_accessed" form:"last_accessed"`
+	Problem               string `json:"problem" form:"problem"`
 	*gorm.Model
 }
 

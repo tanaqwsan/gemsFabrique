@@ -70,6 +70,8 @@ func UpdateBot(c echo.Context) error {
 	uLevel := c.QueryParam("uLevel")
 	uIsSuspended := c.QueryParam("uIsSuspended")
 	uWhatever := c.QueryParam("uWhatever")
+	uGroupType := c.QueryParam("uGroupType")
+	uGroupOwner := c.QueryParam("uGroupOwner")
 
 	if uGrowid != "" {
 		updatedBot.Growid = uGrowid
@@ -88,6 +90,12 @@ func UpdateBot(c echo.Context) error {
 	}
 	if uWhatever != "" {
 		updatedBot.Whatever = uWhatever
+	}
+	if uGroupType != "" {
+		updatedBot.GroupType = uGroupType
+	}
+	if uGroupOwner != "" {
+		updatedBot.GroupOwner = uGroupOwner
 	}
 	config.DB.Save(&updatedBot)
 	if result.Error != nil {

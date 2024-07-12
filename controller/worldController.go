@@ -105,6 +105,7 @@ func UpdateWorld(c echo.Context) error {
 	uSLOwner := c.QueryParam("uSLOwner")
 	uBotHandlerId := c.QueryParam("uBotHandlerId")
 	uGems := c.QueryParam("uGems")
+	uProblem := c.QueryParam("uProblem")
 
 	//http://localhost:8080/world/update/1?uName=world1&uNameId=world1&uOwner=owner1&uType=type1&uIsSmallLock=1&uIsNuked=1&uSmallLockAge=1&uFloatPepperBlockCount=1&uFloatPepperSeedCount=1&uTilePepperSeedCount=1&uTilePepperBlockCount=1&uFossilCount=1&uBotHandlerId=1
 
@@ -153,6 +154,9 @@ func UpdateWorld(c echo.Context) error {
 	}
 	if uGems != "" {
 		updatedWorld.Gems, _ = strconv.Atoi(uGems)
+	}
+	if uProblem != "" {
+		updatedWorld.Problem = uProblem
 	}
 	updatedWorld.LastAccessed = int(time.Now().Unix())
 	config.DB.Save(&updatedWorld)
@@ -460,6 +464,51 @@ func GetWorldTypeStorageSeedThatHasSmallestFloatingPepperSeedTypeAll(c echo.Cont
 			return c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to update world"))
 		}
 		return c.JSON(http.StatusOK, utils.SuccessResponse("World data successfully retrieved", updatedWorld))
+	}
+}
+
+func GetAndSetWorldThatHasBiggestFloatingBlock(c echo.Context) error {
+	growid := c.Param("growid")
+	var bot model.Bot
+	var existingWorld model.World
+	var updatedWorld model.World
+	errGetBot := config.DB.Where("growid = ?", growid).First(&bot).Error
+	if errGetBot != nil {
+		return c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to retrieve bot"))
+	}
+	//find one world where bot_handler_id = id
+	errGetBotWorld := config.DB.Where("bot_handler_id = ?", bot.ID).First(&existingWorld).Error
+	if errGetBotWorld != nil {
+		//if error get world by bot handler id, then we will find world with the biggest float_pepper_block_count
+		//query to find first world with the biggest float_pepper_block_count with condition where float_pepper_block_count > 0 and bot_handler_id == 0
+		currentTime := time.Now().Unix()
+		errGetWorldHasOneOrMoreFloatBlock := config.DB.Where("float_pepper_block_count > ? AND bot_handler_id = ? AND ? - last_accessed > ?", 0, 0, currentTime, 21600).Order("float_pepper_block_count desc").First(&existingWorld).Error
+		if errGetWorldHasOneOrMoreFloatBlock != nil {
+			//if error get world that has floating block min 1, then we will find world with the biggest tile_pepper_seed_count
+			//query to find first world with the biggest tile_pepper_seed_count with condition bot_handler_id == 0
+			errGetWorldMore := config.DB.Where("bot_handler_id = ? AND ? - last_accessed > ?", 0, currentTime, 21600).Order("tile_pepper_seed_count desc").First(&existingWorld).Error
+			if errGetWorldMore != nil {
+				return c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to retrieve world"))
+			} else {
+				updatedWorld = existingWorld
+				updatedWorld.BotHandlerId = int(bot.ID)
+				errUpdate := config.DB.Save(&updatedWorld).Error
+				if errUpdate != nil {
+					return c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to update world"))
+				}
+				return c.JSON(http.StatusOK, utils.SuccessResponse("World data successfully retrieved", updatedWorld))
+			}
+		} else {
+			updatedWorld = existingWorld
+			updatedWorld.BotHandlerId = int(bot.ID)
+			errUpdate := config.DB.Save(&updatedWorld).Error
+			if errUpdate != nil {
+				return c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to update world"))
+			}
+			return c.JSON(http.StatusOK, utils.SuccessResponse("World data successfully retrieved", updatedWorld))
+		}
+	} else {
+		return c.JSON(http.StatusOK, utils.SuccessResponse("World data successfully retrieved", existingWorld))
 	}
 }
 
