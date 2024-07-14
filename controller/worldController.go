@@ -176,11 +176,56 @@ func UpdateWorldLastAccess(c echo.Context) error {
 	var updatedWorld model.World
 	result := config.DB.Where("name = ?", name).First(&existingWorld)
 	if result.Error != nil {
-
+		updatedWorld.Name = name
 	} else {
 		updatedWorld = existingWorld
 	}
 	updatedWorld.LastAccessed = int(time.Now().Unix())
+	config.DB.Save(&updatedWorld)
+
+	if result.Error != nil {
+		return c.JSON(http.StatusCreated, utils.SuccessResponse("Success Created Data", updatedWorld))
+	} else {
+		updatedWorld = existingWorld
+		return c.JSON(http.StatusOK, utils.SuccessResponse("World data successfully updated", nil))
+	}
+}
+
+func UpdateResetWorldBotHandlerId(c echo.Context) error {
+	name := c.Param("name")
+
+	var existingWorld model.World
+	var updatedWorld model.World
+	result := config.DB.Where("name = ?", name).First(&existingWorld)
+	if result.Error != nil {
+		updatedWorld.Name = name
+	} else {
+		updatedWorld = existingWorld
+	}
+	updatedWorld.BotHandlerId = 0
+	config.DB.Save(&updatedWorld)
+
+	if result.Error != nil {
+		return c.JSON(http.StatusCreated, utils.SuccessResponse("Success Created Data", updatedWorld))
+	} else {
+		updatedWorld = existingWorld
+		return c.JSON(http.StatusOK, utils.SuccessResponse("World data successfully updated", nil))
+	}
+}
+
+func UpdateWorldProblem(c echo.Context) error {
+	name := c.Param("name")
+	problem := c.Param("problem")
+
+	var existingWorld model.World
+	var updatedWorld model.World
+	result := config.DB.Where("name = ?", name).First(&existingWorld)
+	if result.Error != nil {
+		updatedWorld.Name = name
+	} else {
+		updatedWorld = existingWorld
+	}
+	updatedWorld.Problem = problem
 	config.DB.Save(&updatedWorld)
 
 	if result.Error != nil {
@@ -498,6 +543,36 @@ func GetAndSetWorldThatHasBiggestFloatingBlock(c echo.Context) error {
 				}
 				return c.JSON(http.StatusOK, utils.SuccessResponse("World data successfully retrieved", updatedWorld))
 			}
+		} else {
+			updatedWorld = existingWorld
+			updatedWorld.BotHandlerId = int(bot.ID)
+			errUpdate := config.DB.Save(&updatedWorld).Error
+			if errUpdate != nil {
+				return c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to update world"))
+			}
+			return c.JSON(http.StatusOK, utils.SuccessResponse("World data successfully retrieved", updatedWorld))
+		}
+	} else {
+		return c.JSON(http.StatusOK, utils.SuccessResponse("World data successfully retrieved", existingWorld))
+	}
+}
+
+func GetAndSetWorldThatHasSmallestTilePepperSeed(c echo.Context) error {
+	growid := c.Param("growid")
+	var bot model.Bot
+	var existingWorld model.World
+	var updatedWorld model.World
+	currentTime := time.Now().Unix()
+	errGetBot := config.DB.Where("growid = ?", growid).First(&bot).Error
+	if errGetBot != nil {
+		return c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to retrieve bot"))
+	}
+	//find one world where bot_handler_id = id
+	errGetBotWorld := config.DB.Where("bot_handler_id = ?", bot.ID).First(&existingWorld).Error
+	if errGetBotWorld != nil {
+		errGetWorldMore := config.DB.Where("bot_handler_id = ? AND ? - last_accessed > ? AND is_nuked = ?", 0, currentTime, 21600, 0).Order("tile_pepper_seed_count asc").First(&existingWorld).Error
+		if errGetWorldMore != nil {
+			return c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to retrieve world"))
 		} else {
 			updatedWorld = existingWorld
 			updatedWorld.BotHandlerId = int(bot.ID)
