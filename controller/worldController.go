@@ -587,6 +587,28 @@ func GetAndSetWorldThatHasSmallestTilePepperSeed(c echo.Context) error {
 	}
 }
 
+func GetOwnerWorld(c echo.Context) error {
+	growid := c.Param("growid")
+	var bot model.Bot
+	var botGroupOwner model.Bot
+	var existingWorld model.World
+	errGetBot := config.DB.Where("growid = ?", growid).First(&bot).Error
+	if errGetBot != nil {
+		return c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to retrieve bot"))
+	}
+	errGetBotGroupOwner := config.DB.Where("growid = ?", bot.GroupOwner).First(&botGroupOwner).Error
+	if errGetBotGroupOwner != nil {
+		return c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to retrieve bot group owner"))
+	}
+
+	errGetBotWorld := config.DB.Where("bot_handler_id = ?", botGroupOwner.ID).First(&existingWorld).Error
+	if errGetBotWorld != nil {
+		return c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to retrieve world"))
+	} else {
+		return c.JSON(http.StatusOK, utils.SuccessResponse("World data successfully retrieved", existingWorld))
+	}
+}
+
 func DeleteWorld(c echo.Context) error {
 	name := c.Param("name")
 	var existingWorld model.World
