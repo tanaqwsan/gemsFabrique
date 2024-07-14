@@ -558,6 +558,7 @@ func GetAndSetWorldThatHasBiggestFloatingBlock(c echo.Context) error {
 }
 
 func GetAndSetWorldThatHasSmallestTilePepperSeed(c echo.Context) error {
+	//This is for owner api, coz there is diff in bot_handler_id set , it is set to 70000 + bot.ID
 	growid := c.Param("growid")
 	var bot model.Bot
 	var existingWorld model.World
@@ -568,14 +569,14 @@ func GetAndSetWorldThatHasSmallestTilePepperSeed(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to retrieve bot"))
 	}
 	//find one world where bot_handler_id = id
-	errGetBotWorld := config.DB.Where("bot_handler_id = ?", bot.ID).First(&existingWorld).Error
+	errGetBotWorld := config.DB.Where("bot_handler_id = ?", 70000+bot.ID).First(&existingWorld).Error
 	if errGetBotWorld != nil {
 		errGetWorldMore := config.DB.Where("bot_handler_id = ? AND ? - last_accessed > ? AND is_nuked = ?", 0, currentTime, 21600, 0).Order("tile_pepper_seed_count asc").First(&existingWorld).Error
 		if errGetWorldMore != nil {
 			return c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to retrieve world"))
 		} else {
 			updatedWorld = existingWorld
-			updatedWorld.BotHandlerId = int(bot.ID)
+			updatedWorld.BotHandlerId = int(70000 + bot.ID)
 			errUpdate := config.DB.Save(&updatedWorld).Error
 			if errUpdate != nil {
 				return c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to update world"))
