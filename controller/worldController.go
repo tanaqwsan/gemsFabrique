@@ -571,7 +571,7 @@ func GetAndSetWorldThatHasSmallestTilePepperSeed(c echo.Context) error {
 	//find one world where bot_handler_id = id
 	errGetBotWorld := config.DB.Where("bot_handler_id = ?", 70000+bot.ID).First(&existingWorld).Error
 	if errGetBotWorld != nil {
-		errGetWorldMore := config.DB.Where("bot_handler_id = ? AND ? - last_accessed > ? AND is_nuked = ?", 0, currentTime, 21600, 0).Order("tile_pepper_seed_count asc").First(&existingWorld).Error
+		errGetWorldMore := config.DB.Where("bot_handler_id = ? AND ? - last_accessed > ? AND is_nuked = ? AND tile_pepper_seed_count < ?", 0, currentTime, 21600, 0, 2451).Order("tile_pepper_seed_count asc").First(&existingWorld).Error
 		if errGetWorldMore != nil {
 			return c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to retrieve world"))
 		} else {

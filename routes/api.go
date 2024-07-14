@@ -27,10 +27,13 @@ func Init() *echo.Echo {
 	e.GET("/worldsBiggestSeedsXK/:xk", controller.GetWorldTypeStorageSeedThatHasBiggestFloatingPepperSeedUnderXK)
 	e.GET("/worldsSmallestSeeds", controller.GetWorldTypeStorageSeedThatHasSmallestFloatingPepperSeed)
 	e.GET("/worldsSmallestSeedsTypeAll", controller.GetWorldTypeStorageSeedThatHasSmallestFloatingPepperSeedTypeAll)
+
 	//For collecting block to break in world break
 	e.PUT("/worldsGetAndSetBiggestFloatingBlock/:growid", controller.GetAndSetWorldThatHasBiggestFloatingBlock)
+
 	//For finding world that has the smallest tile_pepper_seed_count then assign it to current bot (:growid)
 	e.PUT("/worldsGetAndSetSmallestTilePepperSeed/:growid", controller.GetAndSetWorldThatHasSmallestTilePepperSeed)
+
 	e.PUT("/worlds/:name", controller.UpdateWorld)
 	e.PUT("/worldsAccess/:name", controller.UpdateWorldLastAccess)
 	e.PUT("/worldsHandlerReset/:name", controller.UpdateResetWorldBotHandlerId)
