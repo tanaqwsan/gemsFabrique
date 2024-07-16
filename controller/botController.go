@@ -32,7 +32,7 @@ func IndexBotByGroupOwner(c echo.Context) error {
 	groupOwner := c.Param("group_owner")
 	var bots []model.Bot
 
-	err := config.DB.Where("group_owner = ?", groupOwner).Order("id asc").Find(&bots).Error
+	err := config.DB.Where("group_owner = ? AND group_type = ?", groupOwner, "member").Order("id asc").Find(&bots).Error
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to retrieve bot"))
 	}
