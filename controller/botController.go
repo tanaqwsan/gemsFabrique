@@ -28,6 +28,24 @@ func IndexBot(c echo.Context) error {
 	return c.JSON(http.StatusOK, utils.SuccessResponse("Bot data successfully retrieved", response))
 }
 
+func IndexBotByGroupOwner(c echo.Context) error {
+	groupOwner := c.Param("group_owner")
+	var bots []model.Bot
+
+	err := config.DB.Where("group_owner = ?", groupOwner).Order("id asc").Find(&bots).Error
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to retrieve bot"))
+	}
+
+	if len(bots) == 0 {
+		return c.JSON(http.StatusNotFound, utils.ErrorResponse("Empty data"))
+	}
+
+	response := res.ConvertIndexBot(bots)
+
+	return c.JSON(http.StatusOK, utils.SuccessResponse("Bot data successfully retrieved", response))
+}
+
 func ShowBot(c echo.Context) error {
 	growid := c.Param("growid")
 

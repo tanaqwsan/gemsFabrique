@@ -43,6 +43,7 @@ func Init() *echo.Echo {
 	//Manage Bot
 	e.POST("/bots", controller.StoreBot)
 	e.GET("/bots", controller.IndexBot)
+	e.GET("/bots/owner/:group_owner", controller.IndexBotByGroupOwner)
 	e.GET("/bots/worlds/:id", controller.GetWorldByBotHandlerId)
 	e.GET("/bots/worlds/growid/:growid", controller.GetWorldByBotName)
 	e.GET("/bots/:growid", controller.ShowBot)
