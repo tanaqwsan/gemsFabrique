@@ -183,7 +183,7 @@ func UpdateWorldVer2(c echo.Context) error {
 		//data tidak ada di database
 		errCreate := config.DB.Create(&updatedWorld).Error
 		if errCreate != nil {
-			return c.JSON(http.StatusBadRequest, utils.ErrorResponse("Error create data"))
+			return c.JSON(http.StatusBadRequest, errCreate)
 		} else {
 			return c.JSON(http.StatusCreated, utils.SuccessResponse("Success Creating Data", true))
 		}
@@ -192,7 +192,7 @@ func UpdateWorldVer2(c echo.Context) error {
 		//config.DB.Model(&existingArticle).Updates(updatedArticle)
 		errUpdate := config.DB.Model(&existingWorld).Updates(updatedWorld).Error
 		if errUpdate != nil {
-			return c.JSON(http.StatusBadRequest, utils.ErrorResponse("Error update data"))
+			return c.JSON(http.StatusBadRequest, errUpdate)
 		} else {
 			return c.JSON(http.StatusCreated, utils.SuccessResponse("Success Updating Data", true))
 		}
