@@ -28,6 +28,13 @@ func ConvertIndexWorld(worlds []model.World) []web.GetWorldResponse {
 			Gems:                  world.Gems,
 			LastAccessed:          world.LastAccessed,
 			Problem:               world.Problem,
+			TileCCTVCount:         world.TileCCTVCount,
+			TileSLCount:           world.TileSLCount,
+			TileBLCount:           world.TileBLCount,
+			TileHLCount:           world.TileHLCount,
+			TileDoorCount:         world.TileDoorCount,
+			IsDoorAccessible:      world.IsDoorAccessible,
+			IsPathFindAble:        world.IsPathFindAble,
 		}
 		results = append(results, worldResponse)
 	}

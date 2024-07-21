@@ -34,6 +34,13 @@ type World struct {
 	Gems                  int    `json:"gems" form:"gems"`
 	LastAccessed          int    `json:"last_accessed" form:"last_accessed"`
 	Problem               string `json:"problem" form:"problem"`
+	TileCCTVCount         int    `json:"tile_cctv_count" form:"tile_cctv_count"`
+	TileSLCount           int    `json:"tile_sl_count" form:"tile_sl_count"`
+	TileBLCount           int    `json:"tile_bl_count" form:"tile_bl_count"`
+	TileHLCount           int    `json:"tile_hl_count" form:"tile_hl_count"`
+	TileDoorCount         int    `json:"tile_door_count" form:"tile_door_count"`
+	IsDoorAccessible      int    `json:"is_door_accessible" form:"is_door_accessible"`
+	IsPathFindAble        int    `json:"is_path_find_able" form:"is_path_find_able"`
 	*gorm.Model
 }
 
