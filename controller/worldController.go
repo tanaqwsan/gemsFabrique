@@ -185,7 +185,7 @@ func UpdateWorldVer2(c echo.Context) error {
 		if errCreate != nil {
 			return c.JSON(http.StatusBadRequest, utils.ErrorResponse("Error create data"))
 		} else {
-			return c.JSON(http.StatusCreated, utils.SuccessResponse("Success Creating Data", updatedWorld))
+			return c.JSON(http.StatusCreated, utils.SuccessResponse("Success Creating Data", true))
 		}
 	} else {
 		//data ada di database
@@ -194,7 +194,7 @@ func UpdateWorldVer2(c echo.Context) error {
 		if errUpdate != nil {
 			return c.JSON(http.StatusBadRequest, utils.ErrorResponse("Error update data"))
 		} else {
-			return c.JSON(http.StatusCreated, utils.SuccessResponse("Success Updating Data", updatedWorld))
+			return c.JSON(http.StatusCreated, utils.SuccessResponse("Success Updating Data", true))
 		}
 	}
 }
