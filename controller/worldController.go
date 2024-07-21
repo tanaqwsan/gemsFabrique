@@ -168,6 +168,36 @@ func UpdateWorld(c echo.Context) error {
 		return c.JSON(http.StatusOK, utils.SuccessResponse("World data successfully updated", nil))
 	}
 }
+func UpdateWorldVer2(c echo.Context) error {
+	var world model.World
+	if err := c.Bind(&world); err != nil {
+		return c.JSON(http.StatusBadRequest, utils.ErrorResponse("Invalid request body"))
+	}
+
+	var existingWorld model.World
+	var updatedWorld model.World
+	result := config.DB.Where("name = ?", world.Name).First(&existingWorld)
+	updatedWorld = world
+	updatedWorld.LastAccessed = int(time.Now().Unix())
+	if result.Error != nil {
+		//data tidak ada di database
+		errCreate := config.DB.Create(&updatedWorld).Error
+		if errCreate != nil {
+			return c.JSON(http.StatusBadRequest, utils.ErrorResponse("Error create data"))
+		} else {
+			return c.JSON(http.StatusCreated, utils.SuccessResponse("Success Creating Data", updatedWorld))
+		}
+	} else {
+		//data ada di database
+		//config.DB.Model(&existingArticle).Updates(updatedArticle)
+		errUpdate := config.DB.Model(&existingWorld).Updates(updatedWorld).Error
+		if errUpdate != nil {
+			return c.JSON(http.StatusBadRequest, utils.ErrorResponse("Error update data"))
+		} else {
+			return c.JSON(http.StatusCreated, utils.SuccessResponse("Success Updating Data", updatedWorld))
+		}
+	}
+}
 
 func UpdateWorldLastAccess(c echo.Context) error {
 	name := c.Param("name")

@@ -35,6 +35,7 @@ func Init() *echo.Echo {
 	e.PUT("/worldsGetAndSetSmallestTilePepperSeed/:growid", controller.GetAndSetWorldThatHasSmallestTilePepperSeed)
 
 	e.PUT("/worlds/:name", controller.UpdateWorld)
+	e.PUT("/worlds2", controller.UpdateWorldVer2)
 	e.PUT("/worldsAccess/:name", controller.UpdateWorldLastAccess)
 	e.PUT("/worldsHandlerReset/:name", controller.UpdateResetWorldBotHandlerId)
 	e.PUT("/worldsProblem/:name/:problem", controller.UpdateWorldProblem)
