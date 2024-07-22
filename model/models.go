@@ -41,6 +41,7 @@ type World struct {
 	TileDoorCount         int    `json:"tile_door_count" form:"tile_door_count"`
 	IsDoorAccessible      int    `json:"is_door_accessible" form:"is_door_accessible"`
 	IsPathFindAble        int    `json:"is_path_find_able" form:"is_path_find_able"`
+	LastEvent             string `json:"last_event" form:"last_event"`
 	*gorm.Model
 }
 
