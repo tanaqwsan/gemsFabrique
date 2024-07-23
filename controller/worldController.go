@@ -58,6 +58,18 @@ func ShowWorld(c echo.Context) error {
 	return c.JSON(http.StatusOK, utils.SuccessResponse("World data successfully retrieved", existingWorld))
 }
 
+func GetWorldOneFieldInfoByWorldName(c echo.Context) error {
+	name := c.Param("name")
+	field := c.Param("field")
+	var existingWorld model.World
+	err := config.DB.Model(&model.World{}).Where("name = ?", name).Select(field).First(&existingWorld).Error
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to retrieve world"))
+	}
+
+	return c.JSON(http.StatusOK, utils.SuccessResponse("World data successfully retrieved", existingWorld))
+}
+
 func StoreWorld(c echo.Context) error {
 	var world model.World
 	if err := c.Bind(&world); err != nil {
