@@ -61,13 +61,12 @@ func ShowWorld(c echo.Context) error {
 func GetWorldOneFieldInfoByWorldName(c echo.Context) error {
 	name := c.Param("name")
 	field := c.Param("field")
-	var existingWorld model.World
-	err := config.DB.Model(&model.World{}).Where("name = ?", name).Select(field).First(&existingWorld).Error
+	err := config.DB.Model(&model.World{}).Where("name = ?", name).Select(field).First(&name).Error
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to retrieve world"))
 	}
 
-	return c.JSON(http.StatusOK, utils.SuccessResponse("World data successfully retrieved", existingWorld))
+	return c.JSON(http.StatusOK, utils.SuccessResponse("World data successfully retrieved", name))
 }
 
 func StoreWorld(c echo.Context) error {
