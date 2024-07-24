@@ -24,6 +24,7 @@ func Init() *echo.Echo {
 	e.GET("/worlds/:name", controller.ShowWorld)
 	e.GET("/worldsOneField/:name/:field", controller.GetWorldOneFieldInfoByWorldName)
 	e.GET("/worldsCustomWhere/:field/:operator/:value", controller.GetOneWorldWithCustomWhere)
+	e.GET("/worldsCustomWhereV2/:field/:operator/:value", controller.GetOneWorldWithCustomWhereV2)
 	e.GET("/worldsOwner/:growid", controller.GetOwnerWorld)
 	e.GET("/worldsBiggestSeeds", controller.GetWorldTypeStorageSeedThatHasBiggestFloatingPepperSeed)
 	e.GET("/worldsBiggestSeedsXK/:xk", controller.GetWorldTypeStorageSeedThatHasBiggestFloatingPepperSeedUnderXK)
