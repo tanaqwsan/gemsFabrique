@@ -51,3 +51,9 @@ type Word struct {
 	Target string `json:"target" form:"target"`
 	*gorm.Model
 }
+
+type CustomWhere struct {
+	Where     string `json:"where" form:"where"`
+	FieldSort string `json:"field_sort" form:"field_sort"`
+	TypeSort  string `json:"type_sort" form:"type_sort"`
+}

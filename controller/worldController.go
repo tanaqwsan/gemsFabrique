@@ -104,6 +104,24 @@ func GetOneWorldWithCustomWhereV2(c echo.Context) error {
 	return c.JSON(http.StatusOK, utils.SuccessResponse("One world data where "+where+" successfully retrieved", existingWorld))
 }
 
+func GetOneWorldWithCustomWhereV3(c echo.Context) error {
+	var customWhere model.CustomWhere
+	if err := c.Bind(&customWhere); err != nil {
+		return c.JSON(http.StatusBadRequest, utils.ErrorResponse("Invalid request body"))
+	}
+	var existingWorld model.World
+	// Construct the query based on the operator
+	query := fmt.Sprintf("%s", customWhere.Where)
+	querySort := fmt.Sprintf("%s %s", customWhere.FieldSort, customWhere.TypeSort)
+
+	// Execute the query
+	err := config.DB.Where(query).Order(querySort).First(&existingWorld).Error
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err.Error())
+	}
+	return c.JSON(http.StatusOK, utils.SuccessResponse("One world data where "+customWhere.Where+" successfully retrieved", existingWorld))
+}
+
 func StoreWorld(c echo.Context) error {
 	var world model.World
 	if err := c.Bind(&world); err != nil {
