@@ -95,7 +95,7 @@ func GetOneWorldWithCustomWhereV2(c echo.Context) error {
 	// Execute the query
 	err := config.DB.Where(query).First(&existingWorld).Error
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to retrieve world"))
+		return c.JSON(http.StatusInternalServerError, err)
 	}
 	return c.JSON(http.StatusOK, utils.SuccessResponse("One world data where "+where+" successfully retrieved", existingWorld))
 }
