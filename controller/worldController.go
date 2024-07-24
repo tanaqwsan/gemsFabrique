@@ -87,13 +87,17 @@ func GetOneWorldWithCustomWhere(c echo.Context) error {
 }
 
 func GetOneWorldWithCustomWhereV2(c echo.Context) error {
+	//.Order("float_pepper_seed_count desc")
 	where := c.Param("where")
+	fieldSort := c.QueryParam("fieldSort")
+	typeSort := c.QueryParam("typeSort")
 	var existingWorld model.World
 	// Construct the query based on the operator
 	query := fmt.Sprintf("%s", where)
+	querySort := fmt.Sprintf("%s %s", fieldSort, typeSort)
 
 	// Execute the query
-	err := config.DB.Where(query).First(&existingWorld).Error
+	err := config.DB.Where(query).Order(querySort).First(&existingWorld).Error
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
