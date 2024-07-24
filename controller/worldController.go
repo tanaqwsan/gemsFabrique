@@ -5,6 +5,7 @@ import (
 	"app/model"
 	"app/utils"
 	"app/utils/res"
+	"fmt"
 	"github.com/labstack/echo/v4"
 	"log"
 	"net/http"
@@ -74,21 +75,13 @@ func GetOneWorldWithCustomWhere(c echo.Context) error {
 	operator := c.Param("operator")
 	value := c.Param("value")
 	var existingWorld model.World
-	if operator == ">" {
-		err := config.DB.Where("? > ?", field, value).First(&existingWorld).Error
-		if err != nil {
-			return c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to retrieve world"))
-		}
-	} else if operator == "=" {
-		err := config.DB.Where("? = ?", field, value).First(&existingWorld).Error
-		if err != nil {
-			return c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to retrieve world"))
-		}
-	} else {
-		err := config.DB.Where("? < ?", field, value).First(&existingWorld).Error
-		if err != nil {
-			return c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to retrieve world"))
-		}
+	// Construct the query based on the operator
+	query := fmt.Sprintf("%s %s ?", field, operator)
+
+	// Execute the query
+	err := config.DB.Where(query, value).First(&existingWorld).Error
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to retrieve world"))
 	}
 	return c.JSON(http.StatusOK, utils.SuccessResponse("One world data where "+field+" "+operator+" "+value+" successfully retrieved", existingWorld))
 }
