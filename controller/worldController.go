@@ -74,11 +74,22 @@ func GetOneWorldWithCustomWhere(c echo.Context) error {
 	operator := c.Param("operator")
 	value := c.Param("value")
 	var existingWorld model.World
-	err := config.DB.Where("? ? ?", field, operator, value).First(&existingWorld).Error
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to retrieve world"))
+	if operator == ">" {
+		err := config.DB.Where("? > ?", field, value).First(&existingWorld).Error
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to retrieve world"))
+		}
+	} else if operator == "=" {
+		err := config.DB.Where("? = ?", field, value).First(&existingWorld).Error
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to retrieve world"))
+		}
+	} else {
+		err := config.DB.Where("? < ?", field, value).First(&existingWorld).Error
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to retrieve world"))
+		}
 	}
-
 	return c.JSON(http.StatusOK, utils.SuccessResponse("One world data where "+field+" "+operator+" "+value+" successfully retrieved", existingWorld))
 }
 
