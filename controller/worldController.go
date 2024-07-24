@@ -72,7 +72,7 @@ func GetWorldOneFieldInfoByWorldName(c echo.Context) error {
 func GetOneWorldWithCustomWhere(c echo.Context) error {
 	where := c.Param("where")
 	var existingWorld model.World
-	err := config.DB.Where("?", where).First(&existingWorld).Error
+	err := config.DB.Raw("SELECT * FROM worlds WHERE ? LIMIT 1", where).Scan(&existingWorld).Error
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to retrieve world"))
 	}
