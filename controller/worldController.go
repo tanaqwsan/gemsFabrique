@@ -89,8 +89,8 @@ func GetOneWorldWithCustomWhere(c echo.Context) error {
 func GetOneWorldWithCustomWhereV2(c echo.Context) error {
 	//.Order("float_pepper_seed_count desc")
 	where := c.Param("where")
-	fieldSort := c.QueryParam("fieldSort")
-	typeSort := c.QueryParam("typeSort")
+	fieldSort := c.Param("fieldSort")
+	typeSort := c.Param("typeSort")
 	var existingWorld model.World
 	// Construct the query based on the operator
 	query := fmt.Sprintf("%s", where)
