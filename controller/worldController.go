@@ -122,6 +122,30 @@ func GetOneWorldWithCustomWhereV3(c echo.Context) error {
 	return c.JSON(http.StatusOK, utils.SuccessResponse("One world data where "+customWhere.Where+" successfully retrieved", existingWorld))
 }
 
+func GetCountWorldCustomWhere(c echo.Context) error {
+	var customWhere model.CustomWhere
+	var count int64
+	/*
+		err := config.DB.Model(&model.World{}).Where("tile_pepper_seed_count > ?", 1000).Count(&count).Error
+		if err != nil {
+		    // handle error
+		    log.Println("Error counting worlds:", err)
+		} else {
+		    log.Println("Count of worlds with tile_pepper_seed_count > 1000:", count)
+		}
+	*/
+	if err := c.Bind(&customWhere); err != nil {
+		return c.JSON(http.StatusBadRequest, utils.ErrorResponse("Invalid request body"))
+	}
+	// Construct the query based on the operator
+	query := fmt.Sprintf("%s", customWhere.Where)
+	err := config.DB.Model(&model.World{}).Where(query).Count(&count).Error
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err.Error())
+	}
+	return c.JSON(http.StatusOK, utils.SuccessResponse("One world data where "+customWhere.Where+" successfully retrieved", count))
+}
+
 func StoreWorld(c echo.Context) error {
 	var world model.World
 	if err := c.Bind(&world); err != nil {
