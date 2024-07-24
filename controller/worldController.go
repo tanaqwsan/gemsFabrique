@@ -70,14 +70,16 @@ func GetWorldOneFieldInfoByWorldName(c echo.Context) error {
 }
 
 func GetOneWorldWithCustomWhere(c echo.Context) error {
-	where := c.Param("where")
+	field := c.Param("field")
+	operator := c.Param("operator")
+	value := c.Param("value")
 	var existingWorld model.World
-	err := config.DB.Raw("SELECT * FROM worlds WHERE ? LIMIT 1", where).Scan(&existingWorld).Error
+	err := config.DB.Where("? ? ?", field, operator, value).First(&existingWorld).Error
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to retrieve world"))
 	}
 
-	return c.JSON(http.StatusOK, utils.SuccessResponse("One world data where "+where+" successfully retrieved", existingWorld))
+	return c.JSON(http.StatusOK, utils.SuccessResponse("One world data where "+field+" "+operator+" "+value+" successfully retrieved", existingWorld))
 }
 
 func StoreWorld(c echo.Context) error {
