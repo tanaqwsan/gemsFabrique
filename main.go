@@ -11,5 +11,5 @@ func main() {
 
 	e := routes.Init()
 
-	e.Logger.Fatal(e.Start(":3090"))
+	e.Logger.Fatal(e.Start("127.0.0.1:3090"))
 }
