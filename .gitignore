@@ -1,3 +1,5 @@
 .env
 .idea
 Dockerfile
+dbfg.db
+.DS_Store

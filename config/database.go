@@ -3,10 +3,12 @@ package config
 import (
 	"app/model"
 	"fmt"
-	"github.com/joho/godotenv"
 	"os"
 
+	"github.com/joho/godotenv"
+
 	"gorm.io/driver/mysql"
+	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
@@ -14,17 +16,29 @@ var DB *gorm.DB
 
 func ConnectDB() {
 	godotenv.Load(".env")
-	dbUser := os.Getenv("DB_USER")
-	dbPass := os.Getenv("DB_PASS")
-	dbHost := os.Getenv("DB_HOST")
-	dbPort := os.Getenv("DB_PORT")
-	dbName := os.Getenv("DB_NAME")
+	dbType := os.Getenv("DB_TYPE")
 
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
-		dbUser, dbPass, dbHost, dbPort, dbName)
-
+	var dsn string
 	var errDB error
-	DB, errDB = gorm.Open(mysql.Open(dsn), &gorm.Config{})
+
+	if dbType == "mysql" {
+		dbUser := os.Getenv("DB_USER")
+		dbPass := os.Getenv("DB_PASS")
+		dbHost := os.Getenv("DB_HOST")
+		dbPort := os.Getenv("DB_PORT")
+		dbName := os.Getenv("DB_NAME")
+
+		dsn = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+			dbUser, dbPass, dbHost, dbPort, dbName)
+		DB, errDB = gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	} else if dbType == "sqlite" {
+		dbName := os.Getenv("DB_NAME")
+		dsn = fmt.Sprintf("%s.db", dbName)
+		DB, errDB = gorm.Open(sqlite.Open(dsn), &gorm.Config{})
+	} else {
+		panic("Unsupported DB_TYPE")
+	}
+
 	if errDB != nil {
 		panic("Failed to Connect Database")
 	}

@@ -14,8 +14,10 @@ require (
 	github.com/midtrans/midtrans-go v1.3.7
 	golang.org/x/crypto v0.14.0
 	gorm.io/driver/mysql v1.5.2
-	gorm.io/gorm v1.25.2-0.20230530020048-26663ab9bf55
+	gorm.io/gorm v1.25.7-0.20240204074919-46816ad31dde
 )
+
+require github.com/mattn/go-sqlite3 v1.14.22 // indirect
 
 require (
 	github.com/creasty/defaults v1.5.1 // indirect
@@ -33,4 +35,5 @@ require (
 	golang.org/x/sys v0.13.0 // indirect
 	golang.org/x/text v0.13.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
+	gorm.io/driver/sqlite v1.5.7
 )
