@@ -3,3 +3,4 @@
 Dockerfile
 dbfg.db
 .DS_Store
+.log
