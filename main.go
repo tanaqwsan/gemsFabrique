@@ -4,6 +4,8 @@ import (
 	"app/config"
 	"app/routes"
 	"fmt"
+	"io"
+	"os"
 	"sync"
 	"time"
 
@@ -16,10 +18,10 @@ var logChannel chan string
 var wg sync.WaitGroup
 
 // Goroutine untuk menulis log secara asinkron
-func asyncLogger(logFile *lumberjack.Logger) {
+func asyncLogger(logFile io.Writer) {
 	defer wg.Done()
 	for logMessage := range logChannel {
-		_, _ = logFile.Write([]byte(logMessage + "\n"))
+		fmt.Fprintln(logFile, logMessage) // Pastikan log ditulis dengan newline
 	}
 }
 
@@ -29,17 +31,20 @@ func main() {
 	// Konfigurasi rotasi log dengan lumberjack
 	logFile := &lumberjack.Logger{
 		Filename:   "app.log",
-		MaxSize:    100,
+		MaxSize:    10,
 		MaxBackups: 3,
 		MaxAge:     28,
 		Compress:   true,
 	}
 	defer logFile.Close()
 
+	// Gabungkan log ke file dan CLI
+	multiWriter := io.MultiWriter(logFile, os.Stdout)
+
 	// Inisialisasi channel log asinkron
 	logChannel = make(chan string, 1000)
 	wg.Add(1)
-	go asyncLogger(logFile)
+	go asyncLogger(multiWriter)
 
 	// Fungsi untuk mengirim log secara asinkron
 	logMessage := func(msg string) {
