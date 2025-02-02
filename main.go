@@ -27,7 +27,7 @@ func main() {
 	// Konfigurasi rotasi log dengan lumberjack
 	logFile := &lumberjack.Logger{
 		Filename:   "app.log", // Nama file log
-		MaxSize:    100,       // Ukuran maksimum file log dalam MB
+		MaxSize:    10,        // Ukuran maksimum file log dalam MB
 		MaxBackups: 3,         // Jumlah file backup
 		MaxAge:     28,        // Jumlah hari untuk menyimpan log
 		Compress:   true,      // Kompres file log lama
