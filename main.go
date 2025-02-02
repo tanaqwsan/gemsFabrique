@@ -3,21 +3,23 @@ package main
 import (
 	"app/config"
 	"app/routes"
+	"fmt"
 	"sync"
+	"time"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"gopkg.in/natefinch/lumberjack.v2" // Import library lumberjack untuk rotasi log
+	"gopkg.in/natefinch/lumberjack.v2"
 )
 
-var logChannel chan string // Channel untuk log asinkron
-var wg sync.WaitGroup      // WaitGroup untuk menunggu goroutine selesai
+var logChannel chan string
+var wg sync.WaitGroup
 
-// Fungsi untuk menulis log secara asinkron
+// Goroutine untuk menulis log secara asinkron
 func asyncLogger(logFile *lumberjack.Logger) {
 	defer wg.Done()
 	for logMessage := range logChannel {
-		_, _ = logFile.Write([]byte(logMessage + "\n")) // Tulis log ke file
+		_, _ = logFile.Write([]byte(logMessage + "\n"))
 	}
 }
 
@@ -26,25 +28,26 @@ func main() {
 
 	// Konfigurasi rotasi log dengan lumberjack
 	logFile := &lumberjack.Logger{
-		Filename:   "app.log", // Nama file log
-		MaxSize:    10,        // Ukuran maksimum file log dalam MB
-		MaxBackups: 3,         // Jumlah file backup
-		MaxAge:     28,        // Jumlah hari untuk menyimpan log
-		Compress:   true,      // Kompres file log lama
+		Filename:   "app.log",
+		MaxSize:    100,
+		MaxBackups: 3,
+		MaxAge:     28,
+		Compress:   true,
 	}
 	defer logFile.Close()
 
-	// Buat channel untuk log asinkron
-	logChannel = make(chan string, 1000) // Buffer channel untuk 1000 log
+	// Inisialisasi channel log asinkron
+	logChannel = make(chan string, 1000)
 	wg.Add(1)
-	go asyncLogger(logFile) // Jalankan goroutine untuk menulis log asinkron
+	go asyncLogger(logFile)
 
-	// Set output log ke file menggunakan lumberjack
-	e.Logger.SetOutput(logFile)
-
-	// Log pesan ke channel (asinkron)
+	// Fungsi untuk mengirim log secara asinkron
 	logMessage := func(msg string) {
-		logChannel <- msg
+		select {
+		case logChannel <- msg:
+		default:
+			// Drop log jika channel penuh agar tidak blocking
+		}
 	}
 
 	logMessage("Connecting to the database...")
@@ -53,9 +56,15 @@ func main() {
 
 	e = routes.Init()
 
-	// Tambahkan middleware logging
-	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
-		Format: "method=${method}, uri=${uri}, status=${status}, latency=${latency_human}\n",
+	// Middleware logging yang mengirim log ke channel asinkron
+	e.Use(middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
+		LogValuesFunc: func(c echo.Context, v middleware.RequestLoggerValues) error {
+			logMessage(fmt.Sprintf(
+				"time=%s, method=%s, uri=%s, status=%d, latency=%s, remote_ip=%s",
+				v.StartTime.Format(time.RFC3339), v.Method, v.URI, v.Status, v.Latency.String(), c.RealIP(),
+			))
+			return nil
+		},
 	}))
 
 	// Tutup channel dan tunggu goroutine selesai sebelum aplikasi berhenti
