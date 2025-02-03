@@ -14,6 +14,8 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+var min_last_accessed_diff int = 2
+
 func IndexWorld(c echo.Context) error {
 	var worlds []model.World
 
@@ -646,11 +648,11 @@ func GetAndSetWorldThatHasBiggestFloatingBlock(c echo.Context) error {
 		//if error get world by bot handler id, then we will find world with the biggest float_pepper_block_count
 		//query to find first world with the biggest float_pepper_block_count with condition where float_pepper_block_count > 0 and bot_handler_id == 0
 		currentTime := time.Now().Unix()
-		errGetWorldHasOneOrMoreFloatBlock := config.DB.Where("float_pepper_block_count > ? AND bot_handler_id = ? AND ? - last_accessed > ? AND is_nuked = ? AND type = ?", 0, 0, currentTime, 120, 0, "farm").Order("float_pepper_block_count desc").First(&existingWorld).Error
+		errGetWorldHasOneOrMoreFloatBlock := config.DB.Where("float_pepper_block_count > ? AND bot_handler_id = ? AND ? - last_accessed > ? AND is_nuked = ? AND type = ?", 0, 0, currentTime, min_last_accessed_diff, 0, "farm").Order("float_pepper_block_count desc").First(&existingWorld).Error
 		if errGetWorldHasOneOrMoreFloatBlock != nil {
 			//if error get world that has floating block min 1, then we will find world with the biggest tile_pepper_seed_count
 			//query to find first world with the biggest tile_pepper_seed_count with condition bot_handler_id == 0
-			errGetWorldMore := config.DB.Where("bot_handler_id = ? AND ? - last_accessed > ? AND is_nuked = ? AND type = ?", 0, currentTime, 120, 0, "farm").Order("tile_pepper_seed_count desc").First(&existingWorld).Error
+			errGetWorldMore := config.DB.Where("bot_handler_id = ? AND ? - last_accessed > ? AND is_nuked = ? AND type = ?", 0, currentTime, min_last_accessed_diff, 0, "farm").Order("tile_pepper_seed_count desc").First(&existingWorld).Error
 			if errGetWorldMore != nil {
 				return c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to retrieve world"))
 			} else {
@@ -690,7 +692,7 @@ func GetAndSetWorldThatHasSmallestTilePepperSeed(c echo.Context) error {
 	//find one world where bot_handler_id = id
 	errGetBotWorld := config.DB.Where("bot_handler_id = ?", 70000+bot.ID).First(&existingWorld).Error
 	if errGetBotWorld != nil {
-		errGetWorldMore := config.DB.Where("bot_handler_id = ? AND ? - last_accessed > ? AND is_nuked = ? AND tile_pepper_seed_count < ? AND type = ?", 0, currentTime, 120, 0, 2451, "farm").Order("tile_pepper_seed_count asc").First(&existingWorld).Error
+		errGetWorldMore := config.DB.Where("bot_handler_id = ? AND ? - last_accessed > ? AND is_nuked = ? AND tile_pepper_seed_count < ? AND type = ?", 0, currentTime, min_last_accessed_diff, 0, 2451, "farm").Order("tile_pepper_seed_count asc").First(&existingWorld).Error
 		if errGetWorldMore != nil {
 			return c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to retrieve world"))
 		} else {
